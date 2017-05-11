@@ -1,0 +1,1 @@
+# pixi-parallax-resizable
