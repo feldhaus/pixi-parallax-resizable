@@ -1,0 +1,74 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>PIXI - Parallax - Resizable</title>
+    <style>
+        * {padding: 0; margin: 0} 
+        body {min-width: 800px; overflow: scroll}
+    </style>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.1/pixi.min.js"></script>
+</head>
+<body>
+    <script type="text/javascript">
+        // create application
+        var app = new PIXI.Application(window.innerWidth, window.innerHeight, { antialias: true });
+        document.body.appendChild(app.view);
+        
+        // load assets
+        PIXI.loader
+            .add('layer_01.png')
+            .add('layer_02.png')
+            .add('layer_03.png')
+            .add('layer_04.png')
+            .load(onLoaded);
+        
+        var tilingSprites = [];
+        
+        function onLoaded(loader, resources) {
+            // creates a tiling sprites and adds to stage
+            for (var i = 0; i < 4; i++) {
+                tilingSprites.push(new PIXI.extras.TilingSprite(
+                    PIXI.Texture.fromImage('layer_0' + (i+1) + '.png'),
+                    app.renderer.width,
+                    app.renderer.height
+                ));
+                app.stage.addChild(tilingSprites[i]);
+            }
+            
+            // ticker for doing render updates
+            app.ticker.add(update);
+            
+            // adds event listeners
+            window.addEventListener('resize', resize);
+            window.addEventListener('load', resize);
+        }
+        
+        function resize() {
+            // get window size
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            
+            // resize pixi renderer
+            app.renderer.resize(width, height);
+            
+            for (var i = 0; i < tilingSprites.length; i++) {
+                // changes tiling sprites sizes
+                tilingSprites[i].width = width;
+                tilingSprites[i].height = height;
+
+                // and scales based on height
+                var scale = window.innerHeight / tilingSprites[i].texture.height;
+                tilingSprites[i].tileScale.set(scale, scale);
+            }
+        }
+        
+        function update() {
+            // changes 'x' tile position
+            for (var i = 0; i < tilingSprites.length; i++) {
+                tilingSprites[i].tilePosition.x -= (i + 1) * 0.5;
+            }
+        }
+    </script>
+</body>
+</html>
