@@ -3,9 +3,9 @@ A sample using Tiling Sprite to create a parallax scrolling effect and fitting t
 
 ## Credits
 
-+ [@pixijs](https://github.com/pixijs) for creating
++ [PixiJS](https://github.com/pixijs) for creating
   [PixiJS](https://github.com/pixijs/pixi.js).
-+ [@ansimuz](http://ansimuz.com/site/) for the parallax images
++ [Ansimuz](http://ansimuz.com/site/) for the parallax images
 
 ## License
 Copyright (c) 2017 Maicon Feldhaus
