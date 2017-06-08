@@ -4,8 +4,7 @@
     <meta charset="utf-8">
     <title>PIXI - Parallax - Resizable</title>
     <style>
-        * {padding: 0; margin: 0} 
-        body {min-width: 800px; overflow: scroll}
+        * {padding: 0; margin: 0}
     </style>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.1/pixi.min.js"></script>
 </head>
@@ -15,18 +14,24 @@
         var app = new PIXI.Application(window.innerWidth, window.innerHeight, { antialias: true });
         document.body.appendChild(app.view);
         
+        // tilingSprite are the backgrounds
+        var tilingSprites = [];
+        
+        // hero running animation
+        var hero;
+        
         // load assets
         PIXI.loader
             .add('layer_01.png')
             .add('layer_02.png')
             .add('layer_03.png')
             .add('layer_04.png')
+            .add('hero.png')
+            .add('hero.json')
             .load(onLoaded);
         
-        var tilingSprites = [];
-        
         function onLoaded(loader, resources) {
-            // creates a tiling sprites and adds to stage
+            // create a tiling sprites and add to stage
             for (var i = 0; i < 4; i++) {
                 tilingSprites.push(new PIXI.extras.TilingSprite(
                     PIXI.Texture.fromImage('layer_0' + (i+1) + '.png'),
@@ -36,12 +41,25 @@
                 app.stage.addChild(tilingSprites[i]);
             }
             
+            // get animation frames, create the hero and add it stage
+            var frames = [];
+            for (var i = 0; i < 10; i++) {
+                frames.push(PIXI.Texture.fromFrame('0' + i + '.png'));
+            }
+            hero = new PIXI.extras.AnimatedSprite(frames);            
+            hero.x = app.renderer.width / 2;
+            hero.y = app.renderer.height / 2;
+            hero.anchor.set(0.5, 1);
+            hero.animationSpeed = 0.1;
+            hero.play();
+            app.stage.addChildAt(hero, app.stage.children.length-1);
+            
             // ticker for doing render updates
             app.ticker.add(update);
             
             // adds event listeners
+            resize();
             window.addEventListener('resize', resize);
-            window.addEventListener('load', resize);
         }
         
         function resize() {
@@ -53,14 +71,22 @@
             app.renderer.resize(width, height);
             
             for (var i = 0; i < tilingSprites.length; i++) {
-                // changes tiling sprites sizes
+                // change tiling sprites sizes
                 tilingSprites[i].width = width;
                 tilingSprites[i].height = height;
 
-                // and scales based on height
-                var scale = window.innerHeight / tilingSprites[i].texture.height;
+                // and scale it based on window height
+                var scale = height / tilingSprites[i].texture.height;
                 tilingSprites[i].tileScale.set(scale, scale);
             }
+            
+            // keep the hero in the bottom-center position
+            hero.x = width / 2;
+            hero.y = height;
+            
+            // and scale the hero (max-height = height * 70%)
+            var scale = (height * 0.7) / (hero.texture.height);
+            hero.scale.set(scale, scale);
         }
         
         function update() {
