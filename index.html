@@ -64,8 +64,8 @@
         
         function resize() {
             // get window size
-            var width = window.innerWidth;
-            var height = window.innerHeight;
+            var width = window.innerWidth * window.devicePixelRatio;
+            var height = window.innerHeight * window.devicePixelRatio;
             
             // resize pixi renderer
             app.renderer.resize(width, height);
