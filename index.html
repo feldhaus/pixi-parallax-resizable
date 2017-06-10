@@ -11,7 +11,7 @@
 <body>
     <script type="text/javascript">
         // create application
-        var app = new PIXI.Application(window.innerWidth, window.innerHeight, { antialias: true });
+        var app = new PIXI.Application();
         document.body.appendChild(app.view);
         
         // tilingSprite are the backgrounds
@@ -22,19 +22,19 @@
         
         // load assets
         PIXI.loader
-            .add('layer_01.png')
-            .add('layer_02.png')
-            .add('layer_03.png')
-            .add('layer_04.png')
-            .add('hero.png')
-            .add('hero.json')
+            .add('assets/images/layer_01.png')
+            .add('assets/images/layer_02.png')
+            .add('assets/images/layer_03.png')
+            .add('assets/images/layer_04.png')
+            .add('assets/images/hero.png')
+            .add('assets/images/hero.json')
             .load(onLoaded);
         
         function onLoaded(loader, resources) {
             // create a tiling sprites and add to stage
             for (var i = 0; i < 4; i++) {
                 tilingSprites.push(new PIXI.extras.TilingSprite(
-                    PIXI.Texture.fromImage('layer_0' + (i+1) + '.png'),
+                    PIXI.Texture.fromImage('assets/images/layer_0' + (i+1) + '.png'),
                     app.renderer.width,
                     app.renderer.height
                 ));
@@ -64,8 +64,8 @@
         
         function resize() {
             // get window size
-            var width = window.innerWidth * window.devicePixelRatio;
-            var height = window.innerHeight * window.devicePixelRatio;
+            var width = window.innerWidth - 10// * window.devicePixelRatio;
+            var height = window.innerHeight - 10// * window.devicePixelRatio;
             
             // resize pixi renderer
             app.renderer.resize(width, height);
