@@ -6,7 +6,7 @@
     <style>
         * {padding: 0; margin: 0}
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.1/pixi.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.2/pixi.min.js"></script>
 </head>
 <body>
     <script type="text/javascript">
@@ -64,20 +64,22 @@
         
         function resize() {
             // get window size
-            var width = window.innerWidth - 10// * window.devicePixelRatio;
-            var height = window.innerHeight - 10// * window.devicePixelRatio;
+            var width = window.innerWidth; //* window.devicePixelRatio;
+            var height = window.innerHeight; //* window.devicePixelRatio;
             
             // resize pixi renderer
             app.renderer.resize(width, height);
             
             for (var i = 0; i < tilingSprites.length; i++) {
+                var tilingSprite = tilingSprites[i];
+                
                 // change tiling sprites sizes
-                tilingSprites[i].width = width;
-                tilingSprites[i].height = height;
+                tilingSprite.width = width;
+                tilingSprite.height = height;
 
                 // and scale it based on window height
-                var scale = height / tilingSprites[i].texture.height;
-                tilingSprites[i].tileScale.set(scale, scale);
+                var scale = height / tilingSprite.texture.height;
+                tilingSprite.tileScale.set(scale, scale);
             }
             
             // keep the hero in the bottom-center position
@@ -90,9 +92,11 @@
         }
         
         function update() {
-            // changes 'x' tile position
+            // changes 'x' tile position (parallax scrolling effect)
             for (var i = 0; i < tilingSprites.length; i++) {
-                tilingSprites[i].tilePosition.x -= (i + 1) * 0.5;
+                // speed by tileScale
+                var tilingSprite = tilingSprites[i];
+                tilingSprite.tilePosition.x -= (i + 1) * (tilingSprite.tileScale.x * 0.5);
             }
         }
     </script>
