@@ -6,19 +6,19 @@
     <style>
         * {padding: 0; margin: 0}
     </style>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.5.2/pixi.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pixi.js/4.8.7/pixi.min.js"></script>
 </head>
 <body>
     <script type="text/javascript">
         // create application
-        var app = new PIXI.Application();
+        const app = new PIXI.Application();
         document.body.appendChild(app.view);
         
         // tilingSprite are the backgrounds
-        var tilingSprites = [];
+        const tilingSprites = [];
         
         // hero running animation
-        var hero;
+        let hero;
         
         // load assets
         PIXI.loader
@@ -32,9 +32,9 @@
         
         function onLoaded(loader, resources) {
             // create a tiling sprites and add to stage
-            for (var i = 0; i < 4; i++) {
+            for (let i = 0; i < 4; i++) {
                 tilingSprites.push(new PIXI.extras.TilingSprite.fromImage(
-                    'assets/images/layer_0' + (i+1) + '.png',
+                    `assets/images/layer_0${i+1}.png`,
                     app.renderer.width,
                     app.renderer.height
                 ));
@@ -42,71 +42,57 @@
             }
             
             // get animation frames, create the hero and add it stage
-            var frames = [];
+            const frames = [];
             for (var i = 0; i < 10; i++) {
-                frames.push(PIXI.Texture.fromFrame('0' + i + '.png'));
+                frames.push(PIXI.Texture.from(`0${i}.png`));
             }
-            hero = new PIXI.extras.AnimatedSprite(frames);            
-            hero.x = app.renderer.width / 2;
-            hero.y = app.renderer.height / 2;
+            hero = new PIXI.extras.AnimatedSprite(frames);
             hero.anchor.set(0.5, 1);
             hero.animationSpeed = 0.1;
             hero.play();
-            app.stage.addChildAt(hero, app.stage.children.length-1);
+            app.stage.addChildAt(hero, app.stage.children.length - 1);
             
             // ticker for doing render updates
             app.ticker.add(update);
             
             // adds event listeners
-            resize();
             window.addEventListener('resize', resize);
-            window.onorientationchange = resize;
+            window.addEventListener('orientationchange', resize);
+            resize();
         }
         
         function resize() {
             // get window size
-            var width = window.innerWidth// || document.body.clientWidth;
-            var height = window.innerHeight// || document.body.clientHeight;
+            const width = window.innerWidth;
+            const height = window.innerHeight;
                         
             // resize pixi renderer
             app.renderer.resize(width, height);
             
-            for (var i = 0; i < tilingSprites.length; i++) {
-                var tilingSprite = tilingSprites[i];
-                
+            for (let i = 0; i < tilingSprites.length; i++) {
                 // change tiling sprites sizes
-                tilingSprite.width = width;
-                tilingSprite.height = height;
+                tilingSprites[i].width = width;
+                tilingSprites[i].height = height;
 
                 // and scale it based on window height
-                var scale = height / tilingSprite.texture.height;
-                tilingSprite.tileScale.set(scale, scale);
+                const scale = height / tilingSprites[i].texture.height;
+                tilingSprites[i].tileScale.set(scale, scale);
             }
             
             // keep the hero in the bottom-center position
-            hero.x = width / 2;
+            hero.x = width * 0.45;
             hero.y = height;
             
             // and scale the hero (max-height = height * 70%)
-            var scale = (height * 0.7) / (hero.texture.height);
+            const scale = (height * 0.7) / hero.texture.height;
             hero.scale.set(scale, scale);
         }
         
         function update(deltaTime) {
             // changes 'x' tile position (parallax scrolling effect)
-            for (var i = 0; i < tilingSprites.length; i++) {
-                
-                var scale = tilingSprites[i].tileScale.x;
-                var speed = deltaTime * scale;
+            for (let i = 0; i < tilingSprites.length; i++) {
+                const speed = deltaTime * tilingSprites[i].tileScale.x;
                 tilingSprites[i].tilePosition.x -= (i + 1) * speed;
-                
-                // it's "fix" a tilisprite position bug
-                var width = tilingSprites[i].texture.width * scale; 
-                if (tilingSprites[i].tilePosition.x >= width) {
-                    tilingSprites[i].tilePosition.x -= width;
-                } else if (tilingSprites[i].tilePosition.x <= -width) {
-                    tilingSprites[i].tilePosition.x += width;
-                }
             }
         }
     </script>
